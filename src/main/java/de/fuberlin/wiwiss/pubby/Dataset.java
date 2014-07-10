@@ -1,6 +1,7 @@
 package de.fuberlin.wiwiss.pubby;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -22,7 +23,7 @@ import de.fuberlin.wiwiss.pubby.vocab.CONF;
  * A dataset block in the server's configuration.
  */
 public class Dataset extends ResourceReader {
-	private final DataSource dataSource;
+	private DataSource dataSource;
 	private final MetadataConfiguration metadata;
 	
 	// TODO: This is a rather dirty hack. We may need DataSource.getProvenance() or something
@@ -52,6 +53,14 @@ public class Dataset extends ResourceReader {
 	
 	public boolean supportsSPARQL11() {
 		return getBoolean(CONF.supportsSPARQL11, false);
+	}
+	
+	public String getDatasetBase() {
+		return getIRI(CONF.datasetBase, "");
+	}
+	
+	public String getDefaultGraph() {
+		return getIRI(CONF.sparqlDefaultGraph);
 	}
 
 	/**
@@ -181,5 +190,17 @@ public class Dataset extends ResourceReader {
 		}
 		
 		return result;
+	}
+	
+	public void addIRIsToRewrite(Configuration configuration, List<String> iris) {
+		String fullWebBase = configuration.getWebApplicationBaseURI() + 
+				configuration.getWebResourcePrefix();
+		
+		IRIRewriter rewriter = IRIRewriter.identity;
+		for(String iri : iris) {
+			rewriter = IRIRewriter.chain(rewriter, IRIRewriter.createNamespaceBased(iri, fullWebBase));
+		}
+
+		this.dataSource = new RewrittenDataSource(this.dataSource, rewriter, addSameAsStatements());
 	}
 }

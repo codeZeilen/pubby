@@ -2,8 +2,11 @@ package de.fuberlin.wiwiss.pubby;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.hp.hpl.jena.rdf.model.Model;
@@ -62,6 +65,19 @@ public class Configuration extends ResourceReader {
 			datasets.add(ds);
 			allBrowsableNamespaces.addAll(ds.getBrowsableNamespaces());
 		}
+		
+		Map<String, List<String>> graphToDatasetBase = new HashMap<String, List<String>>();
+		for (Dataset s : datasets) {
+			String datasetDefaultGraph = s.getDefaultGraph();
+			if(!graphToDatasetBase.containsKey(datasetDefaultGraph)) {
+				graphToDatasetBase.put(datasetDefaultGraph, new LinkedList<String>());
+			}
+			graphToDatasetBase.get(datasetDefaultGraph).add(s.getDatasetBase());
+		}
+		for (Dataset s : datasets) {
+			s.addIRIsToRewrite(this, graphToDatasetBase.get(s.getDefaultGraph()));
+		}
+		
 		allBrowsableNamespaces.add(getWebApplicationBaseURI() + getWebResourcePrefix());
 		allBrowsableNamespaces.addAll(getBrowsableNamespaces());
 		
