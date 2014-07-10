@@ -186,10 +186,6 @@ public abstract class IRIRewriter {
 					return rewrittenNamespace + absoluteIRI.substring(
 							originalNamespace.length());
 				}
-				if (absoluteIRI.startsWith(rewrittenNamespace)) {
-					throw new IllegalArgumentException(
-							"Can't rewrite already rewritten IRI: " + absoluteIRI);
-				}
 				return absoluteIRI;
 			}
 			@Override
@@ -197,10 +193,6 @@ public abstract class IRIRewriter {
 				if (absoluteIRI.startsWith(rewrittenNamespace)) {
 					return originalNamespace + absoluteIRI.substring(
 							rewrittenNamespace.length());
-				}
-				if (absoluteIRI.startsWith(originalNamespace)) {
-					throw new IllegalArgumentException(
-							"Can't unrewrite IRI that already is in the original namespace: " + absoluteIRI);
 				}
 				return absoluteIRI;
 			}

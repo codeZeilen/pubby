@@ -65,19 +65,6 @@ public class Configuration extends ResourceReader {
 			datasets.add(ds);
 			allBrowsableNamespaces.addAll(ds.getBrowsableNamespaces());
 		}
-		
-		Map<String, List<String>> graphToDatasetBase = new HashMap<String, List<String>>();
-		for (Dataset s : datasets) {
-			String datasetDefaultGraph = s.getDefaultGraph();
-			if(!graphToDatasetBase.containsKey(datasetDefaultGraph)) {
-				graphToDatasetBase.put(datasetDefaultGraph, new LinkedList<String>());
-			}
-			graphToDatasetBase.get(datasetDefaultGraph).add(s.getDatasetBase());
-		}
-		for (Dataset s : datasets) {
-			s.addIRIsToRewrite(this, graphToDatasetBase.get(s.getDefaultGraph()));
-		}
-		
 		allBrowsableNamespaces.add(getWebApplicationBaseURI() + getWebResourcePrefix());
 		allBrowsableNamespaces.addAll(getBrowsableNamespaces());
 		

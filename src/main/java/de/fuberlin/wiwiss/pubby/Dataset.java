@@ -154,10 +154,11 @@ public class Dataset extends ResourceReader {
 		// Base IRI for IRIs considered to be "in" the data source
 		String fullWebBase = configuration.getWebApplicationBaseURI() + 
 				configuration.getWebResourcePrefix();
-		String datasetBase = getIRI(CONF.datasetBase, 
-				fullWebBase);
-		if (!datasetBase.equals(fullWebBase)) {
-			rewriter = IRIRewriter.createNamespaceBased(datasetBase, fullWebBase);
+		Set<String> datasetBases = getIRIs(CONF.datasetBase);
+		for (String datasetBase : datasetBases) {
+			if (!datasetBase.equals(fullWebBase)) {
+				rewriter = IRIRewriter.chain(rewriter, IRIRewriter.createNamespaceBased(datasetBase, fullWebBase));
+			}
 		}
 
 		// Escape special characters in IRIs
@@ -190,17 +191,5 @@ public class Dataset extends ResourceReader {
 		}
 		
 		return result;
-	}
-	
-	public void addIRIsToRewrite(Configuration configuration, List<String> iris) {
-		String fullWebBase = configuration.getWebApplicationBaseURI() + 
-				configuration.getWebResourcePrefix();
-		
-		IRIRewriter rewriter = IRIRewriter.identity;
-		for(String iri : iris) {
-			rewriter = IRIRewriter.chain(rewriter, IRIRewriter.createNamespaceBased(iri, fullWebBase));
-		}
-
-		this.dataSource = new RewrittenDataSource(this.dataSource, rewriter, addSameAsStatements());
 	}
 }
