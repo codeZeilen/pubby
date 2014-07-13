@@ -15,6 +15,7 @@ import com.hp.hpl.jena.util.FileManager;
 import de.fuberlin.wiwiss.pubby.sources.DataSource;
 import de.fuberlin.wiwiss.pubby.sources.FilteredDataSource;
 import de.fuberlin.wiwiss.pubby.sources.ModelDataSource;
+import de.fuberlin.wiwiss.pubby.sources.PropertyFilteredDataSource;
 import de.fuberlin.wiwiss.pubby.sources.RemoteSPARQLDataSource;
 import de.fuberlin.wiwiss.pubby.sources.RewrittenDataSource;
 import de.fuberlin.wiwiss.pubby.vocab.CONF;
@@ -188,6 +189,10 @@ public class Dataset extends ResourceReader {
 					return false;
 				}
 			};
+		}
+		
+		if (hasProperty(CONF.visibleProperties)) {
+			result = new PropertyFilteredDataSource(result, getIRIs(CONF.visibleProperties));
 		}
 		
 		return result;

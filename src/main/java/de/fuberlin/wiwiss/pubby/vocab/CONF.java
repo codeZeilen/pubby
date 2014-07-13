@@ -26,6 +26,8 @@ public class CONF {
 	public static final Property dataset = m.createProperty(NS + "dataset");
 	public static final Property showLabels = m.createProperty(NS + "showLabels");
 	public static final Property loadVocabulary = m.createProperty(NS + "loadVocabulary");
+	public static final Property visibleProperties = m.createProperty(NS + "visibleProperties");
+
 
 	// Dataset subclasses
 	public static final Resource AnnotationProvider = m.createResource(NS + "AnnotationProvider");
